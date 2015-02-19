@@ -24,10 +24,22 @@
           $date=$match->attributes()->date;
           $dateInRequiredFormat=str_replace(".","-",$date);
           $time=$match->attributes()->time;
-          $dateAndTimeArray = array($dateInRequiredFormat,'',$time.':00');
+
+          $dateAndTimeArray = array($dateInRequiredFormat,'',$time . ":00");
+          $betEndsTime=join(" ",$dateAndTimeArray);
+          $time .= ":00";
+
+          $betReminderTime=date_create($betEndsTime);
+          date_add($betReminderTime,date_interval_create_from_date_string("110 minutes"));
+          $betReminderTime = date_format($betReminderTime,"Y-m-d H:i:s");
+
+
+          $dateAndTimeArray = array($dateInRequiredFormat,'',$time);
+
           $dateAndTime=join(" ",$dateAndTimeArray);
 
-          $betsDetails["dateTime"] = $dateAndTime;
+          $betsDetails["betEndsTime"] = $betEndsTime;
+          $betsDetails["betReminderTime"] = $betReminderTime;
           $betsDetails["option1"] = "HOME";
           $betsDetails["option2"] = "DRAW";
           $betsDetails["option3"] = "AWAY";
