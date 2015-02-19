@@ -22,8 +22,10 @@
             foreach ($league->match as $match) {
                if($Url == "http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/france.xml" ){
                 if($match->attributes()->id == "4102818"){
+                    $date=$match->attributes()->date;
+                    $dateInRequiredFormat=str_replace(".","-",$date);
                     echo "time:  ".$match->attributes()->time."<br>";
-                    echo "date:  ".$match->attributes()->date."<br>";
+                    echo "date:  ".$dateInRequiredFormat."<br>";
                     echo "home:  ".$match->home->attributes()->name."<br>";
                     echo "away:  ".$match->away->attributes()->name."<br>";
                 }
