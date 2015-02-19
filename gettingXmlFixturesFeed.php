@@ -24,11 +24,13 @@
                 if($match->attributes()->id == "4102818"){
                     $date=$match->attributes()->date;
                     $dateInRequiredFormat=str_replace(".","-",$date);
-                    echo "time:  ".$match->attributes()->time."<br>";
-                    echo "date:  ".$dateInRequiredFormat."<br>";
+                    $time=$match->attributes()->time;
+                    $dateAndTimeArray = array($dateInRequiredFormat,'',$time.':00');
+                    $dateAndTime=join(" ",$dateAndTimeArray);
+                    echo "date and time:  ".$dateAndTime."<br>";
                     echo "home:  ".$match->home->attributes()->name."<br>";
                     echo "away:  ".$match->away->attributes()->name."<br>";
-                }
+                 }
                }
                elseif($Url =="http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/france.xml")
                {
