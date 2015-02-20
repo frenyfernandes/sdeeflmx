@@ -1,6 +1,4 @@
 <?php
-    $betDetails = array();
-    $names=array();
 
     function curl_download($Url){
      if (!function_exists('curl_init')){
@@ -30,18 +28,9 @@
                     $dateAndTimeArray = array($dateInRequiredFormat,'',$time.':00');
                     $dateAndTime=join(" ",$dateAndTimeArray);
                     echo "date and time:  ".$dateAndTime."<br>";
-                   /* array_push($betDetails, array("dateTime"=>$dateAndTime));
                     echo "home:  ".$match->home->attributes()->name."<br>";
-                    array_push($betDetails, array("option1"=>"HOME"));
-                    array_push($betDetails, array("option2"=>"DRAW"));
-                    array_push($betDetails, array("option3"=>"AWAY"));
-
-                    array_push($betDetails, array("description"=>$match->home->attributes()->name . "vs" . $match->away->attributes()->name));*/
-
                     echo "away:  ".$match->away->attributes()->name."<br>";
-
-
-                 }
+                }
                }
                elseif($Url =="http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/france.xml")
                {
@@ -52,10 +41,7 @@
                         {
                             if($bookmaker->attributes()->name == "Bet365"){
                                 foreach($bookmaker->odd as $odd){
-                                    
-                                     $name=$odd->attributes()->name;
-                                     echo $name[1];
-                                    //echo "name  ".$odd->attributes()->name."  value  ".$odd->attributes()->value."<br>";
+                                    echo "name  ".$odd->attributes()->name."  value  ".$odd->attributes()->value."<br>";
                                     
                                  }
                             }
@@ -64,7 +50,28 @@
                     }
                 }
                }
+              elseif($Url =="http://www.tipgin.net/datav2/accounts/mbulut/soccer/livescore/livescore.xml")
+              {
+                
+               if($match->attributes()->id == "4212304"){
+                    if($match->attributes()->status == "FT"){
+                    $score_home=$match->home->attributes()->goals;
+                    $score_away=$match->away->attributes()->goals;
+                   if((int)$score_home > (int)$score_away )
+                    {
+          $winner = $match->home->attributes()->name;
+                     echo  $winner;
+                     }else
+                     {
+                      $winner = $match->home->attributes()->away;
+                      echo  $winner;
+                      }
+                    }else{
+                        echo "match is still not over";
+                    }
+                }
 
+              }
 
                 
             }
@@ -75,7 +82,6 @@
 
 
 
-// this is a test.
 
 
 
@@ -101,8 +107,9 @@
       
     }
 
-      curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/france.xml");
+      //curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/france.xml");
+      curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/livescore/livescore.xml");
 
-      curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/france.xml")
+      //curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/france.xml")
     
 ?>
