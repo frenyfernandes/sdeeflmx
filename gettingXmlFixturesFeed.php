@@ -1,21 +1,6 @@
 <?php
-  /**
-   * This script will run only once in a day at 00:00:00 gmt time
-   */
+ $betsDetails = array();
 
-  $betsDetails = array();
-  
-  // query to retieve all the legues and country name. 
-  
-  // fire curl_download function on leagues and retrieve betdetails.
-  
-  // check if the data is already present into the DB
-  // obtain the first match with id. xml_match_id
-  // sort bets table in descending order w.r.t bet ends time. and retrieve the first record match_id as match_id_table.
-  // if xml_match_id == match_id_table
-  // do nothing
-  // ELSE
-  // insert the retrieved betdetails into the DB.
   function curl_download($Url, $betsDetails){
     $name = array();
     $i=0;
@@ -34,7 +19,7 @@
   //print_r($xml);
   foreach ($xml->league as $league) {
     foreach ($league->match as $match) {
-       if($Url == "http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/france.xml"){
+       if($Url == "http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/france.xml" ){
         if($match->attributes()->id == "4102818"){
           $date=$match->attributes()->date;
           $dateInRequiredFormat=str_replace(".","-",$date);
