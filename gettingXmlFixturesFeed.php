@@ -26,17 +26,16 @@
           $time=$match->attributes()->time;
 
           $dateAndTimeArray = array($dateInRequiredFormat,'',$time . ":00");
-          $betEndsTime=join(" ",$dateAndTimeArray);
+          $dateAndTimeArray=join(" ",$dateAndTimeArray);
+
+          $betEndsTime = date_create($dateAndTimeArray);
+          $betEndsTime = date_format($betEndsTime,"Y-m-d H:i:s");
+
           $time .= ":00";
 
           $betReminderTime=date_create($betEndsTime);
           date_add($betReminderTime,date_interval_create_from_date_string("110 minutes"));
           $betReminderTime = date_format($betReminderTime,"Y-m-d H:i:s");
-
-
-          $dateAndTimeArray = array($dateInRequiredFormat,'',$time);
-
-          $dateAndTime=join(" ",$dateAndTimeArray);
 
           $betsDetails["betEndsTime"] = $betEndsTime;
           $betsDetails["betReminderTime"] = $betReminderTime;
