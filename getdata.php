@@ -1,10 +1,10 @@
 <?php
   $betsDetail = array();
+  $matchId = array();
+  $todb = array();
   echo "<pre>";
   // $leagueXmlName = explode(":", "Algeria: Algeria Cup - Play Off");
-  $leagueXmlName = explode(":", "Algeria: Algeria Cup");
-  $leagueXmlName = explode("-", $leagueXmlName[1]);
-  print_r($leagueXmlName[0]);
+
 
 
   $con=mysql_connect("localhost","root","");
@@ -19,34 +19,91 @@
   }
 
  
-  $sql3="SELECT display_name,country FROM user WHERE user_type = 2";
-  $query3=mysql_query($sql3) or die(mysql_error());
-  $row3=mysql_fetch_assoc($query3) or die(mysql_error());
-  while ($row3=mysql_fetch_assoc($query3)) {
-    // print_r($row3);
-     // countryName($row3['country']);  
-     
-  }
+  $selCountryName="SELECT DISTINCT display_name,country FROM user WHERE user_type = 2";
+  $exeSelCountry=mysql_query($selCountryName) or die(mysql_error());
+  $fetchCountry=mysql_fetch_assoc($exeSelCountry) or die(mysql_error());
+    while ($fetchCountry=mysql_fetch_assoc($exeSelCountry)) {
+      // print_r($row3);
+      // countryName($row3['country']);  
+    }
   
   countryName("france", "Ligue 1");
 
   echo "</pre>";
   function countryName($country, $league)
   {
-  
+    $matchId = array();
+    
     $fixtures = curl_download_fixtures($country, $league);
-    //$odds = curl_download_odds($country, $league);
-   //$odds = curl_download("http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/".$country.".xml");
+    $odds = curl_download_odds($country, $league);
+    foreach($fixtures as $fixturez) {
+      foreach($odds as $oddz){
+        if($fixturez['match_id'] == $oddz['match_id'])
+        {
+          $betsDetail[]=array_merge($fixturez,$oddz);
+
+         // print_r($betsDetail);
+        }
+      }
+    }
+    
+    $selUserId="SELECT user_id FROM user WHERE `correct_option` = '' AND match_id > 0";
+    echo "total number of bets found: " . count($betsDetail) . "<br>";
+
+    foreach ($betsDetail as $key => $value) {
+      print_r($value["match_id"] . "<br>");
+    }
+    $selMatchId="SELECT DISTINCT match_id FROM bets WHERE `correct_option` = '' AND match_id > 0";
+    $exeMatchId=mysql_query($selMatchId) or die(mysql_error());
+
+    echo "undeclared Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
+    $temp = $exeMatchId;
+
+    $dbMatchIds = array();
+    $alreadyPresent = array();
+
+    // while ($row  = mysql_fetch_assoc($temp)) {
+    //   $dbMatchIds[] = $row['match_id'];
+    // }
+
+    while ($fetchMatchId=mysql_fetch_assoc($exeMatchId)) {
+      echo "<br>";
+      print_r($fetchMatchId['match_id']);
+      $i = 0;
+      foreach ($betsDetail as $key => $value) {
+        // print_r($value['match_id'] . "<br>");
+        if($value['match_id'] == $fetchMatchId['match_id']){
+          // echo "Value found: " . $value['match_id']."<br> i = " . $i . "<br>";
+          $alreadyPresent[] = $i;
+          break;
+        } 
+        $i++;
+      }
+    }
+
+    print_r($alreadyPresent);
+    foreach ($alreadyPresent as $key => $value) {
+      unset($betsDetail[$value]);
+    }
+
+    // print_r($betsDetail);
+    echo "New details:<br>";
+    foreach ($betsDetail as $key => $value) {
+      print_r($betsDetail[$key]);
+      $queryInsert = "INSERT INTO bets()"
+      INSERT INTO `bets` (`bet_id`, `creator_id`, `category_id`, `bet_details`, `option1`, `opt1percent`, `option2`, `opt2percent`, `option3`, `opt3percent`, `option4`, `opt4percent`, `creation_time`, `bet_ends`, `rem_time`, `correct_option`, `reportedBy`, `match_id`) VALUES ('', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1990-01-01 00:00:00', NULL, '1990-01-01 00:00:00', NULL, NULL, '12345');
+    }
   }
+  //print_r($betsDetail);
   function curl_download_odds($country, $leagueName){
-    echo $leagueName . "<br/>";
+    // echo $leagueName . "<br/>";
     $name = array();
     $betsDetails = array();
     $betDetails = array();
     $i=0;
     $currentDate = gmdate("d.m.Y");
     $curTimestamp = strtotime((string)$currentDate);
-    echo $curTimestamp;
+    // echo $curTimestamp;
     $Url="http://www.tipgin.net/datav2/accounts/mbulut/soccer/odds/".$country.".xml";
     if (!function_exists('curl_init')){
         die('Sorry cURL is not installed!');
@@ -94,19 +151,19 @@
         }
       }
     }
-    print_r($betsDetails);
+    //print_r($betsDetails);
     return $betsDetails;
   }
 
   function curl_download_fixtures($country, $leagueName){
-    echo $leagueName . "<br/>";
+    // echo $leagueName . "<br/>";
     $name = array();
     $betsDetails = array();
     $betDetails = array();
     $i=0;
     $currentDate = gmdate("d.m.Y");
     $curTimestamp = strtotime((string)$currentDate);
-    echo $curTimestamp;
+    // echo $curTimestamp;
     $Url="http://www.tipgin.net/datav2/accounts/mbulut/soccer/fixtures/".$country.".xml";
     if (!function_exists('curl_init')){
         die('Sorry cURL is not installed!');
@@ -165,7 +222,7 @@
 
       }
     }
-    print_r($betsDetails);
+    //print_r($betsDetails);
     return $betsDetails;
   }
 
