@@ -3,6 +3,8 @@
   $matchId = array();
   $todb = array();
   echo "<pre>";
+  $countryList=array("england","germany","france","spain","europe","italy");
+  var_dump($countryList);
   // $leagueXmlName = explode(":", "Algeria: Algeria Cup - Play Off");
 
 
@@ -21,13 +23,12 @@
  
   $selCountryName="SELECT DISTINCT display_name,country FROM user WHERE user_type = 2";
   $exeSelCountry=mysql_query($selCountryName) or die(mysql_error());
-  $fetchCountry=mysql_fetch_assoc($exeSelCountry) or die(mysql_error());
-    while ($fetchCountry=mysql_fetch_assoc($exeSelCountry)) {
-      // print_r($row3);
-      // countryName($row3['country']);  
+  while ($fetchCountry=mysql_fetch_assoc($exeSelCountry)) {
+      print_r($fetchCountry);
+      countryName($fetchCountry['country'],$fetchCountry['display_name'] );  
     }
   
-  countryName("france", "Ligue 1");
+  // countryName("france", "Ligue 1");
 
   echo "</pre>";
   function countryName($country, $league)
@@ -47,19 +48,19 @@
       }
     }
     //selecting user id query
-    $selUserId="SELECT user_id FROM user WHERE `display_name` = 'Ligue 1'";
+    $selUserId="SELECT user_id FROM user WHERE `display_name` = '$league'";
     $exeselUserId=mysql_query($selUserId) or die(mysql_error());
     $UserId=mysql_fetch_assoc($exeselUserId) or die(mysql_error());
     print_r("user_id:" . $UserId['user_id'] . "-----------");
     $UserId = $UserId['user_id'];
 
-    foreach ($betsDetail as $key => $value) {
-      print_r($value["match_id"] . "<br>");
-    }
+    // foreach ($betsDetail as $key => $value) {
+    //   print_r($value["match_id"] . "<br>");
+    // }
     $selMatchId="SELECT match_id FROM bets WHERE `correct_option` IS NULL AND match_id > 0";
     $exeMatchId=mysql_query($selMatchId) or die(mysql_error());
 
-    echo "undeclared Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
+    // echo "undeclared Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
     $temp = $exeMatchId;
 
     $dbMatchIds = array();
@@ -70,8 +71,8 @@
     // }
 
     while ($fetchMatchId=mysql_fetch_assoc($exeMatchId)) {
-      echo "<br>";
-      print_r($fetchMatchId['match_id']);
+      // echo "<br>";
+      // print_r($fetchMatchId['match_id']);
       $i = 0;
       foreach ($betsDetail as $key => $value) {
         // print_r($value['match_id'] . "<br>");
@@ -89,7 +90,7 @@
       unset($betsDetail[$value]);
     }
 
-    print_r($betsDetail);
+    // print_r($betsDetail);
     echo "New details:<br>";
     $insertCounter = 0;
     $UserId = (int)$UserId;
