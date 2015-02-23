@@ -46,14 +46,17 @@
         }
       }
     }
-    
-    $selUserId="SELECT user_id FROM user WHERE `correct_option` = '' AND match_id > 0";
-    echo "total number of bets found: " . count($betsDetail) . "<br>";
+    //selecting user id query
+    $selUserId="SELECT user_id FROM user WHERE `display_name` = 'Ligue 1'";
+    $exeselUserId=mysql_query($selUserId) or die(mysql_error());
+    $UserId=mysql_fetch_assoc($exeselUserId) or die(mysql_error());
+    print_r("user_id:" . $UserId['user_id'] . "-----------");
+    $UserId = $UserId['user_id'];
 
     foreach ($betsDetail as $key => $value) {
       print_r($value["match_id"] . "<br>");
     }
-    $selMatchId="SELECT DISTINCT match_id FROM bets WHERE `correct_option` = '' AND match_id > 0";
+    $selMatchId="SELECT match_id FROM bets WHERE `correct_option` IS NULL AND match_id > 0";
     $exeMatchId=mysql_query($selMatchId) or die(mysql_error());
 
     echo "undeclared Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
@@ -86,12 +89,40 @@
       unset($betsDetail[$value]);
     }
 
-    // print_r($betsDetail);
+    print_r($betsDetail);
     echo "New details:<br>";
+    $insertCounter = 0;
+    $UserId = (int)$UserId;
+
+   // return;
+
+
     foreach ($betsDetail as $key => $value) {
-      print_r($betsDetail[$key]);
-      $queryInsert = "INSERT INTO bets()"
-      INSERT INTO `bets` (`bet_id`, `creator_id`, `category_id`, `bet_details`, `option1`, `opt1percent`, `option2`, `opt2percent`, `option3`, `opt3percent`, `option4`, `opt4percent`, `creation_time`, `bet_ends`, `rem_time`, `correct_option`, `reportedBy`, `match_id`) VALUES ('', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1990-01-01 00:00:00', NULL, '1990-01-01 00:00:00', NULL, NULL, '12345');
+      // print_r($betsDetail[$key]['description']);
+      /*$description=$betsDetail[$value]['description'];//['description'];
+      print_r($description)."<br>";*/
+      
+      $description=(string)$betsDetail[$key]['description'];
+      $option1=(string)$betsDetail[$key]['option1'];
+      $opt1percent=(double)$betsDetail[$key]['opt1percent'];
+      $option2=(string)$betsDetail[$key]['option2'];
+      $opt2percent=(double)$betsDetail[$key]['opt2percent'];
+      $option3=(string)$betsDetail[$key]['option3'];
+      $opt3percent=(double)$betsDetail[$key]['opt3percent'];
+      $betCreationTime=(string)$betsDetail[$key]['betCreationTime'];
+      $betEndsTime=(string)$betsDetail[$key]['betEndsTime'];
+      $betReminderTime=(string)$betsDetail[$key]['betReminderTime'];
+      $match_id=(string)$betsDetail[$key]['match_id'];
+     
+      $queryInsert = "INSERT INTO `bets` ";
+      $queryInsert .= "(`bet_id`, `creator_id`, `category_id`, `bet_details`, `option1`, `opt1percent`, `option2`, `opt2percent`, `option3`, `opt3percent`, `option4`, `opt4percent`, `creation_time`, `bet_ends`, `rem_time`, `correct_option`, `reportedBy`, `match_id`";
+      $queryInsert .= ") VALUES ( ";
+      $queryInsert .= "'', $UserId,1,'$description','$option1',$opt1percent,'$option2',";
+      $queryInsert .= "$opt2percent,'$option3',$opt3percent, NULL, NULL,";
+      $queryInsert .= "'$betCreationTime','$betEndsTime','$betReminderTime', NULL, NULL,$match_id)";
+        echo $queryInsert . "<br>";
+       $exeInsert=mysql_query($queryInsert) or die(mysql_error());
+      //  $insertCounter++;
     }
   }
   //print_r($betsDetail);
