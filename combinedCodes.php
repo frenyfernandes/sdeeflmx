@@ -582,9 +582,9 @@
   $resultBets = mysqli_query($connection, $queryBets);
   echo "<pre>";
 
-  while ($row = mysqli_fetch_assoc($resultBets)) {
-    print_r($row);
-    $matchIds[] = $row["match_id"];
+  while ($betwinner = mysqli_fetch_assoc($resultBets)) {
+    print_r($betwinner);
+    $matchIds[] = $betwinner["match_id"];
     
   }
   $winnerList = curl_download_live("http://www.tipgin.net/datav2/accounts/mbulut/soccer/livescore/livescore.xml", $matchIds);
