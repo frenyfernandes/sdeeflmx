@@ -16,8 +16,6 @@
     echo "no db".die(mysql_error());
   }
   
-
- 
   $selCountryName="SELECT DISTINCT display_name,country FROM user WHERE user_type = 2";
   $exeSelCountry=mysql_query($selCountryName) or die(mysql_error());
   while ($fetchCountry=mysql_fetch_assoc($exeSelCountry)) {
@@ -25,7 +23,7 @@
      // countryName($fetchCountry['country'],$fetchCountry['display_name'] );  
     }
   
-  countryName("france", "Ligue 1");
+  countryName("europe", "Champions League");
 
   //echo "</pre>";
   function countryName($country, $league)

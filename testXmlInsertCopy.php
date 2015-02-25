@@ -1,41 +1,27 @@
 <?php
-  
-  $betsDetail = array();
-  $matchId = array();
-  $todb = array();
+  require_once('lib/connection.php');
+  require_once('lib/database.php');
+
   ini_set('max_execution_time', 300);
-  //echo "<pre>";
+
   $countryList=array("england","germany","france","spain","europe","italy");
- // var_dump($countryList);
-  // $leagueXmlName = explode(":", "Algeria: Algeria Cup - Play Off");
 
+  
+  $selCountryName="SELECT display_name,country FROM user WHERE user_type = 1";
 
-
- $con=mysql_connect("localhost","root","");
-  if(!$con)
-  {
-    echo "error".die(mysql_error());
-  }
-  $db=mysql_select_db("betterthegame",$con);
-  if(!$db)
-  {
-    echo "no db".die(mysql_error());
-  }
- 
-
- 
-  $selCountryName="SELECT DISTINCT display_name,country FROM user WHERE user_type = 2";
-  $exeSelCountry=mysql_query($selCountryName) or die(mysql_error());
-  while ($fetchCountry=mysql_fetch_assoc($exeSelCountry)) {
-      print_r($fetchCountry);
-      countryName($fetchCountry['country'],$fetchCountry['display_name'] );  
+  $exeSelCountry = $database->query($selCountryName);
+  
+  while ($fetchCountry = $database->fetch($exeSelCountry)) {
+      print_r($fetchCountry['country']);
+      // countryName($fetchCountry['country'],$fetchCountry['display_name'],$database);  
     }
   
-  //countryName("argentina", "Primera Division");
+  countryName("france", "Ligue 1", $database);
 
   //echo "</pre>";
-  function countryName($country, $league)
-  {
+  function countryName($country, $league, $database){
+    $betsDetail = array();
+
     $matchId = array();
     
     $fixtures = curl_download_fixtures($country, $league);
@@ -46,24 +32,24 @@
         {
           $betsDetail[]=array_merge($fixturez,$oddz);
 
-         //print_r($betsDetail);
+         // print_r($betsDetail);
         }
       }
     }
     //selecting user id query
     $selUserId="SELECT user_id FROM user WHERE `display_name` = '$league'";
-    $exeselUserId=mysql_query($selUserId) or die(mysql_error());
-    $UserId=mysql_fetch_assoc($exeselUserId) or die(mysql_error());
-    print_r("user_id:" . $UserId['user_id'] . "-----------");
+    $exeselUserId=$database->query($selUserId) or die(mysql_error());
+    $UserId=$database->fetch($exeselUserId) or die(mysql_error());
+   // print_r("user_id:" . $UserId['user_id'] . "-----------");
     $UserId = $UserId['user_id'];
 
     // foreach ($betsDetail as $key => $value) {
     //   print_r($value["match_id"] . "<br>");
     // }
     $selMatchId="SELECT match_id FROM bets WHERE `correct_option` IS NULL AND match_id > 0";
-    $exeMatchId=mysql_query($selMatchId) or die(mysql_error());
+    $exeMatchId=$database->query($selMatchId) or die(mysql_error());
 
-    // echo "undeclareWinnerd Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
+    // echo "undeclared Bets found in DB: " . mysql_num_rows($exeMatchId) . "<br>";
     $temp = $exeMatchId;
 
     $dbMatchIds = array();
@@ -73,7 +59,7 @@
     //   $dbMatchIds[] = $row['match_id'];
     // }
 
-    while ($fetchMatchId=mysql_fetch_assoc($exeMatchId)) {
+    while ($fetchMatchId=$database->fetch($exeMatchId)) {
       // echo "<br>";
       // print_r($fetchMatchId['match_id']);
       $i = 0;
@@ -125,7 +111,7 @@
       $queryInsert .= "$opt2percent,'$option3',$opt3percent, NULL, NULL,";
       $queryInsert .= "'$betCreationTime','$betEndsTime','$betReminderTime', NULL, NULL,$match_id)";
         //echo $queryInsert . "<br>";
-       $exeInsert=mysql_query($queryInsert) or die(mysql_error());
+       $exeInsert=$database->query($queryInsert) or die(mysql_error());
       //  $insertCounter++;
     }
     
